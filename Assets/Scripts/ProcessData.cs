@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.IO;
 using UnityEngine;
 #if UNITY_EDITOR
 using UnityEditor;
@@ -7,43 +6,37 @@ using UnityEditor;
 
 public class ProcessData : MonoBehaviour
 {
-    [SerializeField] private TextAsset csvFile; // Drag and drop the CSV file here
-    [SerializeField] private TurbineDataContainer turbineDataContainer; // Drag and drop the TurbineDataContainer here
+    [SerializeField] private TextAsset csvFile; // Drag and drop the CSV file
+    [SerializeField] private TurbineDataContainer turbineDataContainer; // Target ScriptableObject
 
-    public void GenerateScriptableObject()
+    public void GenerateTurbineData()
     {
 #if UNITY_EDITOR
         if (csvFile == null)
         {
-            Debug.LogError("No CSV file provided. Please assign a CSV file in the Inspector.");
+            Debug.LogError("No CSV file assigned!");
             return;
         }
 
         if (turbineDataContainer == null)
         {
-            Debug.LogError("No TurbineDataContainer assigned. Please assign a TurbineDataContainer ScriptableObject.");
+            Debug.LogError("No TurbineDataContainer assigned!");
             return;
         }
 
-        // Group data by turbineID
         Dictionary<string, List<string[]>> turbineDataGroups = new Dictionary<string, List<string[]>>();
         string[] lines = csvFile.text.Split('\n');
 
-        // Skip header and process each line
+        // Process lines (skip header)
         for (int i = 1; i < lines.Length; i++)
         {
             string line = lines[i].Trim();
             if (string.IsNullOrEmpty(line)) continue;
 
             string[] data = line.Split(',');
-            if (data.Length < 8)
-            {
-                Debug.LogError("Malformed data on line " + (i + 1));
-                continue;
-            }
+            if (data.Length < 8) continue; // Ensure all columns exist
 
             string turbineID = data[0].Trim();
-
             if (!turbineDataGroups.ContainsKey(turbineID))
             {
                 turbineDataGroups[turbineID] = new List<string[]>();
@@ -51,15 +44,14 @@ public class ProcessData : MonoBehaviour
             turbineDataGroups[turbineID].Add(data);
         }
 
-        // Create TurbineData for each turbineID and add it to TurbineDataContainer
         List<TurbineData> turbinesList = new List<TurbineData>();
 
+        // Create TurbineData objects
         foreach (var entry in turbineDataGroups)
         {
             string turbineID = entry.Key;
             List<string[]> rows = entry.Value;
 
-            // Prepare arrays for data
             int rowCount = rows.Count;
             string[] timeIntervals = new string[rowCount];
             int[] eventCodes = new int[rowCount];
@@ -69,7 +61,6 @@ public class ProcessData : MonoBehaviour
             float[] rotorSpeeds = new float[rowCount];
             float[] powers = new float[rowCount];
 
-            // Populate arrays
             for (int i = 0; i < rowCount; i++)
             {
                 string[] data = rows[i];
@@ -82,7 +73,6 @@ public class ProcessData : MonoBehaviour
                 powers[i] = float.Parse(data[7].Trim());
             }
 
-            // Create and populate the TurbineData
             TurbineData turbineData = new TurbineData
             {
                 turbineID = turbineID,
@@ -98,14 +88,12 @@ public class ProcessData : MonoBehaviour
             turbinesList.Add(turbineData);
         }
 
-        // Store the data in the TurbineDataContainer
         turbineDataContainer.turbines = turbinesList.ToArray();
 
-        // Save the updated TurbineDataContainer asset
         EditorUtility.SetDirty(turbineDataContainer);
         AssetDatabase.SaveAssets();
 
-        Debug.Log("TurbineDataContainer updated successfully with all turbine data!");
+        Debug.Log("TurbineDataContainer updated successfully!");
 #endif
     }
 }
