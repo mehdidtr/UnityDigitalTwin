@@ -21,9 +21,9 @@ public class TimeRemaining : MonoBehaviour
         }
 
         // Start with the first dropdown value
-        currentIndex = 0;
+        currentIndex = timeDropdown.selectedItemIndex;
         TimerOn = true;
-        TimeLeft = 1 * 60;
+        TimeLeft = 10 * 60;
         timeDropdown.onValueChanged.AddListener(OnDropdownValueChanged);
     }
 
@@ -61,16 +61,18 @@ public class TimeRemaining : MonoBehaviour
     private void OnDropdownValueChanged(int selectedIndex)
     {
         // Reset the timer to 10 minutes (600 seconds) whenever a new value is selected
-        TimeLeft = 1 * 60; // 10 minutes
+        TimeLeft = 10 * 60; // 10 minutes
         TimerOn = true; // Start the timer
         Debug.Log($"Timer reset for new value: {timeDropdown.items[selectedIndex].itemName}");
+        currentIndex = timeDropdown.selectedItemIndex;
     }
     // Select the next dropdown value and restart the countdown
     private void SelectNextDropdownValue()
     {
         // Get the number of items in the dropdown
         int itemCount = timeDropdown.items.Count; // Use the `items` property
-
+        Debug.Log($"ItemCount : {itemCount}");
+        Debug.Log($"CurrentIndex : {currentIndex}");
         if (itemCount == 0)
         {
             Debug.LogWarning("Dropdown has no items!");
@@ -78,13 +80,17 @@ public class TimeRemaining : MonoBehaviour
         }
 
         // Increment the index and wrap around if necessary
-        currentIndex = (currentIndex + 1) % itemCount;
-
+        if (currentIndex >= itemCount)
+            currentIndex = 0;
+        else
+            currentIndex = currentIndex + 1;
+        
         // Update the dropdown's selected index
         timeDropdown.ChangeDropdownInfo(currentIndex);
+        Debug.Log($"CurrentIndexAfter : {currentIndex}");
 
         // Set the timer duration based on the new selected item
-        TimeLeft = 1 * 60;
+        TimeLeft = 10 * 60;
 
         // Restart the timer
         TimerOn = true;

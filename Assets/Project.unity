@@ -2210,7 +2210,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 41, y: 29}
+  m_AnchoredPosition: {x: 73, y: 29}
   m_SizeDelta: {x: 30, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &460244988
@@ -3340,7 +3340,7 @@ GameObject:
   - component: {fileID: 613002821}
   - component: {fileID: 613002820}
   m_Layer: 0
-  m_Name: YieldValue
+  m_Name: RpmValue
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3362,7 +3362,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 17, y: -14}
+  m_AnchoredPosition: {x: 0.6, y: -14}
   m_SizeDelta: {x: 200, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &613002820
@@ -3419,7 +3419,7 @@ MonoBehaviour:
   m_fontSizeMin: 18
   m_fontSizeMax: 72
   m_fontStyle: 1
-  m_HorizontalAlignment: 1
+  m_HorizontalAlignment: 2
   m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
@@ -5242,8 +5242,9 @@ GameObject:
   - component: {fileID: 989730890}
   - component: {fileID: 989730892}
   - component: {fileID: 989730891}
+  - component: {fileID: 989730893}
   m_Layer: 0
-  m_Name: Yield
+  m_Name: RPM
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -5309,6 +5310,21 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 989730889}
   m_CullTransparentMesh: 1
+--- !u!114 &989730893
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 989730889}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b959ef8b6bbaa4bdc82a304fb6bfb740, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  timeDropdown: {fileID: 980610981}
+  countdownDisplay: {fileID: 613002820}
+  turbineDataContainer: {fileID: 11400000, guid: bb9c3c6670e564d4cba437e2d413fa11, type: 2}
 --- !u!1001 &1000701993
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -5351,7 +5367,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1823845563083471575, guid: eb73f9e6589c5400ba8a0a25e471a0e9, type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0.0000032012374
+      value: 0.0000032012401
       objectReference: {fileID: 0}
     - target: {fileID: 1823845563083471575, guid: eb73f9e6589c5400ba8a0a25e471a0e9, type: 3}
       propertyPath: m_LocalRotation.y
@@ -5379,39 +5395,39 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8028738261238288798, guid: eb73f9e6589c5400ba8a0a25e471a0e9, type: 3}
       propertyPath: _localToGlobeFixedMatrix.c0.x
-      value: -0.6728848093258094
+      value: -0.67288480932498
       objectReference: {fileID: 0}
     - target: {fileID: 8028738261238288798, guid: eb73f9e6589c5400ba8a0a25e471a0e9, type: 3}
       propertyPath: _localToGlobeFixedMatrix.c0.y
-      value: -0.5306826093191805
+      value: -0.530682609323208
       objectReference: {fileID: 0}
     - target: {fileID: 8028738261238288798, guid: eb73f9e6589c5400ba8a0a25e471a0e9, type: 3}
       propertyPath: _localToGlobeFixedMatrix.c0.z
-      value: -0.5153659862361244
+      value: -0.5153659862330603
       objectReference: {fileID: 0}
     - target: {fileID: 8028738261238288798, guid: eb73f9e6589c5400ba8a0a25e471a0e9, type: 3}
       propertyPath: _localToGlobeFixedMatrix.c1.x
-      value: 0.1618068878416549
+      value: 0.16180688784645247
       objectReference: {fileID: 0}
     - target: {fileID: 8028738261238288798, guid: eb73f9e6589c5400ba8a0a25e471a0e9, type: 3}
       propertyPath: _localToGlobeFixedMatrix.c1.y
-      value: -0.7853939735585898
+      value: -0.7853939735564631
       objectReference: {fileID: 0}
     - target: {fileID: 8028738261238288798, guid: eb73f9e6589c5400ba8a0a25e471a0e9, type: 3}
       propertyPath: _localToGlobeFixedMatrix.c1.z
-      value: 0.5974735131587708
+      value: 0.5974735131602671
       objectReference: {fileID: 0}
     - target: {fileID: 8028738261238288798, guid: eb73f9e6589c5400ba8a0a25e471a0e9, type: 3}
       propertyPath: _localToGlobeFixedMatrix.c2.x
-      value: 0.7218342287800433
+      value: 0.721834228779741
       objectReference: {fileID: 0}
     - target: {fileID: 8028738261238288798, guid: eb73f9e6589c5400ba8a0a25e471a0e9, type: 3}
       propertyPath: _localToGlobeFixedMatrix.c2.y
-      value: -0.318641122639366
+      value: -0.31864112263790056
       objectReference: {fileID: 0}
     - target: {fileID: 8028738261238288798, guid: eb73f9e6589c5400ba8a0a25e471a0e9, type: 3}
       propertyPath: _localToGlobeFixedMatrix.c2.z
-      value: -0.6143478488193981
+      value: -0.6143478488205133
       objectReference: {fileID: 0}
     - target: {fileID: 8028738261238288798, guid: eb73f9e6589c5400ba8a0a25e471a0e9, type: 3}
       propertyPath: _localToGlobeFixedMatrix.c3.x
@@ -7453,7 +7469,7 @@ GameObject:
   - component: {fileID: 1492729550}
   - component: {fileID: 1492729549}
   m_Layer: 0
-  m_Name: YieldLabel
+  m_Name: RpmLabel
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -7475,8 +7491,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 20, y: 28}
-  m_SizeDelta: {x: 100, y: 50}
+  m_AnchoredPosition: {x: 20, y: 30}
+  m_SizeDelta: {x: 200, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1492729549
 MonoBehaviour:
@@ -7498,7 +7514,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Yield
+  m_text: Current RPM
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -8999,7 +9015,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1823845563083471575, guid: eb73f9e6589c5400ba8a0a25e471a0e9, type: 3}
       propertyPath: m_LocalRotation.x
-      value: -0.000020079875
+      value: -0.000020079868
       objectReference: {fileID: 0}
     - target: {fileID: 1823845563083471575, guid: eb73f9e6589c5400ba8a0a25e471a0e9, type: 3}
       propertyPath: m_LocalRotation.y
@@ -9027,39 +9043,39 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8028738261238288798, guid: eb73f9e6589c5400ba8a0a25e471a0e9, type: 3}
       propertyPath: _localToGlobeFixedMatrix.c0.x
-      value: -0.6728906267493591
+      value: -0.6728906267471474
       objectReference: {fileID: 0}
     - target: {fileID: 8028738261238288798, guid: eb73f9e6589c5400ba8a0a25e471a0e9, type: 3}
       propertyPath: _localToGlobeFixedMatrix.c0.y
-      value: -0.5306543400777242
+      value: -0.5306543400884636
       objectReference: {fileID: 0}
     - target: {fileID: 8028738261238288798, guid: eb73f9e6589c5400ba8a0a25e471a0e9, type: 3}
       propertyPath: _localToGlobeFixedMatrix.c0.z
-      value: -0.5153874934462498
+      value: -0.5153874934380788
       objectReference: {fileID: 0}
     - target: {fileID: 8028738261238288798, guid: eb73f9e6589c5400ba8a0a25e471a0e9, type: 3}
       propertyPath: _localToGlobeFixedMatrix.c1.x
-      value: 0.16175578019687664
+      value: 0.16175578020967035
       objectReference: {fileID: 0}
     - target: {fileID: 8028738261238288798, guid: eb73f9e6589c5400ba8a0a25e471a0e9, type: 3}
       propertyPath: _localToGlobeFixedMatrix.c1.y
-      value: -0.7854012046444835
+      value: -0.7854012046388129
       objectReference: {fileID: 0}
     - target: {fileID: 8028738261238288798, guid: eb73f9e6589c5400ba8a0a25e471a0e9, type: 3}
       propertyPath: _localToGlobeFixedMatrix.c1.z
-      value: 0.597477846365311
+      value: 0.5974778463693013
       objectReference: {fileID: 0}
     - target: {fileID: 8028738261238288798, guid: eb73f9e6589c5400ba8a0a25e471a0e9, type: 3}
       propertyPath: _localToGlobeFixedMatrix.c2.x
-      value: 0.7218402565367948
+      value: 0.7218402565359887
       objectReference: {fileID: 0}
     - target: {fileID: 8028738261238288798, guid: eb73f9e6589c5400ba8a0a25e471a0e9, type: 3}
       propertyPath: _localToGlobeFixedMatrix.c2.y
-      value: -0.31867037439829043
+      value: -0.3186703743943823
       objectReference: {fileID: 0}
     - target: {fileID: 8028738261238288798, guid: eb73f9e6589c5400ba8a0a25e471a0e9, type: 3}
       propertyPath: _localToGlobeFixedMatrix.c2.z
-      value: -0.6143255888655668
+      value: -0.6143255888685404
       objectReference: {fileID: 0}
     - target: {fileID: 8028738261238288798, guid: eb73f9e6589c5400ba8a0a25e471a0e9, type: 3}
       propertyPath: _localToGlobeFixedMatrix.c3.x

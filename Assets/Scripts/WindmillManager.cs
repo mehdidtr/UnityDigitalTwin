@@ -43,7 +43,7 @@ public class WindmillManager : MonoBehaviour
             float duration = ParseTimeIntervalToSeconds(timeInterval);
 
             // Log the current rotor speed (RPM)
-            Debug.Log($"Current RPM for Turbine {turbineID}: {rotorSpeed}");
+            //Debug.Log($"Current RPM for Turbine {turbineID}: {rotorSpeed}");
 
             // Convert rotor speed from RPM to degrees per second
             float rotationSpeed = rotorSpeed * 6f; // 1 RPM = 6 degrees per second
