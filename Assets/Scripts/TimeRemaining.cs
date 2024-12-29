@@ -14,12 +14,6 @@ public class TimeRemaining : MonoBehaviour
 
     void Start()
     {
-        if (timeDropdown == null || countdownDisplay == null)
-        {
-            Debug.LogError("TimeDropdown or CountdownDisplay not assigned!");
-            return;
-        }
-
         // Start with the first dropdown value
         currentIndex = timeDropdown.selectedItemIndex;
         TimerOn = true;

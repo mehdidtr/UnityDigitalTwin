@@ -3,44 +3,41 @@ using UnityEngine;
 using Michsky.MUIP; // Michsky.MUIP namespace
 using TMPro; // For TextMeshPro
 
-public class RPM : MonoBehaviour
+public class AverageWindSpeed : MonoBehaviour
 {
-    [SerializeField] private CustomDropdown timeDropdown; // Reference to your Michsky CustomDropdown
-    [SerializeField] private TMP_Text rpmText; // Text placeholder for countdown
+    [SerializeField] private CustomDropdown timeDropdown; // Fait référence au menu déroulant du Time Selector
+    [SerializeField] private TMP_Text avgWindText; // Le placeholder de type texte qui affichera la valeur à l'écran
     [SerializeField] private TurbineDataContainer turbineDataContainer; // Reference to your TurbineDataContainer
 
-    private int currentIndex; // Track the current dropdown index
+    private int currentIndex; // Variable pour suivre l'index actuel du menu déroulant
 
-    private float currentRPM = 0;
+    private float avgWindSpeed; // Variable pour stocker la vitesse moyenne du vent
 
     void Start()
     {
-        // Ensure the dropdown value change listener is added
         if (timeDropdown != null)
         {
             currentIndex = timeDropdown.selectedItemIndex;
             timeDropdown.onValueChanged.AddListener(OnDropdownValueChanged); // Add listener to dropdown value change
             for (int i = 0; i < turbineDataContainer.turbines.Length; i++)
             {
-                currentRPM += turbineDataContainer.turbines[i].rotorSpeeds[currentIndex];
+                avgWindSpeed += turbineDataContainer.turbines[i].windSpeeds[currentIndex];
             }
-            currentRPM /= turbineDataContainer.turbines.Length; // Calculate the average RPM
+            avgWindSpeed /= turbineDataContainer.turbines.Length; // Calculate the average wind speed
         }
     }
 
     // Update is called once per frame
     void Update()
     {
-        // Check if the turbineDataContainer is valid and the currentIndex is within bounds
         if (turbineDataContainer != null)
         {
-
             // Update the display with the current RPM
-            rpmText.text = $"{currentRPM} rpm"; // Format RPM text
+            avgWindText.text = $"{avgWindSpeed} m/s"; // Format RPM text
         }
         else
         {
-            rpmText.text = "No data available";
+            avgWindText.text = "No data available";
         }
     }
 
@@ -48,12 +45,12 @@ public class RPM : MonoBehaviour
     private void OnDropdownValueChanged(int selectedIndex)
     {
         currentIndex = selectedIndex; // Update the current index when the dropdown value changes
-        currentRPM = 0;
+        avgWindSpeed = 0;
         for (int i = 0; i < turbineDataContainer.turbines.Length; i++)
         {
-            currentRPM += turbineDataContainer.turbines[i].rotorSpeeds[currentIndex];
+            avgWindSpeed += turbineDataContainer.turbines[i].windSpeeds[currentIndex];
         }
-        currentRPM /= turbineDataContainer.turbines.Length; // Calculate the average RPM
+        avgWindSpeed /= turbineDataContainer.turbines.Length; // Calculate the average wind speed
         //Debug.Log($"Selected dropdown index: {currentIndex}");
     }
 }
