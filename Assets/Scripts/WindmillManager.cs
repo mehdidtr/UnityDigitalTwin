@@ -1,15 +1,18 @@
 using System.Collections;
 using UnityEngine;
+using Michsky.MUIP; // Michsky.MUIP namespace for dropdown handling
 
 public class WindmillManager : MonoBehaviour
 {
     public string turbineID; // Manually set the ID in the Inspector
-    public TurbineDataContainer turbineDataContainer; // Drag and drop the TurbineDataContainer ScriptableObject
-    public Transform windmillBlades; // The windmill blades to rotate
+    public TurbineDataContainer turbineDataContainer; // Reference to TurbineDataContainer ScriptableObject
+    public Transform windmillBlades; // Windmill blades to rotate
     public Vector3 rotationAxis = Vector3.forward; // Axis of rotation (default is Z-axis)
+    public CustomDropdown timeDropdown; // Reference to Michsky CustomDropdown for time selection
 
     private TurbineData turbineData; // Holds the data for the specific turbine
     private int currentIntervalIndex = 0; // Tracks the current time interval
+    private int selectedTimeFactor = 10; // Default factor in minutes
 
     private void Start()
     {
@@ -19,6 +22,7 @@ public class WindmillManager : MonoBehaviour
         if (turbineData != null)
         {
             Debug.Log($"Windmill {turbineData.turbineID} initialized with {turbineData.timeIntervals.Length} data entries.");
+            timeDropdown.onValueChanged.AddListener(OnDropdownOptionSelected);
             StartCoroutine(RotateWindmill());
         }
         else
@@ -37,94 +41,75 @@ public class WindmillManager : MonoBehaviour
                 yield break;
             }
 
-            // Get the current rotor speed and interval duration
+            // Use the currently selected time factor to determine duration
             float rotorSpeed = turbineData.rotorSpeeds[currentIntervalIndex]; // In RPM
-            string timeInterval = turbineData.timeIntervals[currentIntervalIndex];
-            float duration = ParseTimeIntervalToSeconds(timeInterval);
-
-            // Log the current rotor speed (RPM)
-            //Debug.Log($"Current RPM for Turbine {turbineID}: {rotorSpeed}");
+            float duration = selectedTimeFactor * 60f; // Convert minutes to seconds
 
             // Convert rotor speed from RPM to degrees per second
             float rotationSpeed = rotorSpeed * 6f; // 1 RPM = 6 degrees per second
-
             float elapsedTime = 0f;
 
-            // Rotate the windmill blades for the duration of the current interval
+            // Rotate the windmill blades for the duration
             while (elapsedTime < duration)
             {
                 float deltaRotation = rotationSpeed * Time.deltaTime;
                 windmillBlades.Rotate(rotationAxis, deltaRotation); // Rotate around the chosen axis
                 elapsedTime += Time.deltaTime;
-
-                // Check for time interval change
-                CheckForTimeIntervalChange();
                 yield return null;
             }
 
-            // Move to the next time interval
-            currentIntervalIndex = (currentIntervalIndex + 1) % turbineData.rotorSpeeds.Length;
+            // Move to the next time interval unless overridden by the dropdown
+            if (selectedTimeFactor == 10) // Default factor
+            {
+                currentIntervalIndex = (currentIntervalIndex + 1) % turbineData.rotorSpeeds.Length;
+            }
         }
     }
 
-    // Method to parse a time interval like "00:00-00:10" into its duration in seconds
-    private float ParseTimeIntervalToSeconds(string timeInterval)
+    // Method called when a dropdown option is selected
+    private void OnDropdownOptionSelected(int selectedIndex)
+    {
+        if (selectedIndex < 0 || selectedIndex >= turbineData.timeIntervals.Length)
+        {
+            Debug.LogWarning("Invalid dropdown index selected.");
+            return;
+        }
+
+        // Parse the selected time interval to extract the factor (e.g., 10 for "00:00-00:10")
+        string selectedInterval = turbineData.timeIntervals[selectedIndex];
+        selectedTimeFactor = ParseTimeFactor(selectedInterval);
+        Debug.Log($"Selected time interval: {selectedInterval}, Factor: {selectedTimeFactor}");
+
+        // Log the RPM for the selected turbine at this interval
+        float selectedRPM = turbineData.rotorSpeeds[selectedIndex];
+        Debug.Log($"Selected turbine {turbineID} RPM: {selectedRPM}");
+
+        // Log changes for all wind turbines
+        Debug.Log($"All wind turbines' RPM will be adjusted based on the selected time interval: {selectedInterval}");
+    }
+
+    // Parse the time factor from the interval string (assumes consistent format like "00:00-00:10")
+    private int ParseTimeFactor(string timeInterval)
     {
         string[] parts = timeInterval.Split('-');
         if (parts.Length != 2)
         {
-            Debug.LogWarning($"Invalid time interval format: {timeInterval}. Defaulting to 1 second.");
-            return 1f; // Default to 1 second if parsing fails
+            Debug.LogWarning($"Invalid time interval format: {timeInterval}. Defaulting to factor 10.");
+            return 10; // Default to 10 minutes
         }
 
-        float startSeconds = TimeToSeconds(parts[0]);
-        float endSeconds = TimeToSeconds(parts[1]);
+        string[] startParts = parts[0].Split(':');
+        string[] endParts = parts[1].Split(':');
 
-        if (endSeconds < startSeconds)
+        if (startParts.Length < 2 || endParts.Length < 2)
         {
-            Debug.LogWarning("End time is earlier than start time. Using default duration of 1 second.");
-            return 1f;
+            Debug.LogWarning($"Invalid time format in interval: {timeInterval}. Defaulting to factor 10.");
+            return 10;
         }
 
-        return endSeconds - startSeconds;
-    }
+        int startMinutes = int.Parse(startParts[startParts.Length - 2]);
+        int endMinutes = int.Parse(endParts[startParts.Length - 2]);
 
-    // Converts a time string in "HH:mm:ss" or "mm:ss" format to seconds
-    private float TimeToSeconds(string timeString)
-    {
-        string[] timeParts = timeString.Split(':');
-        int seconds = 0;
-
-        if (timeParts.Length == 3)
-        {
-            // HH:mm:ss format
-            seconds += int.Parse(timeParts[0]) * 3600; // Hours to seconds
-            seconds += int.Parse(timeParts[1]) * 60;   // Minutes to seconds
-            seconds += int.Parse(timeParts[2]);       // Seconds
-        }
-        else if (timeParts.Length == 2)
-        {
-            // mm:ss format
-            seconds += int.Parse(timeParts[0]) * 60;   // Minutes to seconds
-            seconds += int.Parse(timeParts[1]);       // Seconds
-        }
-
-        return seconds;
-    }
-
-    // Method to handle user input or time interval changes
-    private void CheckForTimeIntervalChange()
-    {
-        if (Input.GetKeyDown(KeyCode.UpArrow)) // Example: Go to the next time interval
-        {
-            currentIntervalIndex = (currentIntervalIndex + 1) % turbineData.timeIntervals.Length;
-            Debug.Log($"Time interval changed to {turbineData.timeIntervals[currentIntervalIndex]}");
-        }
-
-        if (Input.GetKeyDown(KeyCode.DownArrow)) // Example: Go to the previous time interval
-        {
-            currentIntervalIndex = (currentIntervalIndex - 1 + turbineData.timeIntervals.Length) % turbineData.timeIntervals.Length;
-            Debug.Log($"Time interval changed to {turbineData.timeIntervals[currentIntervalIndex]}");
-        }
+        return endMinutes - startMinutes; // Return the difference in minutes
     }
 }
