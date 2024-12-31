@@ -24,7 +24,16 @@ public class PowerGraphic : MonoBehaviour
         currentIndex = timeDropdown.selectedItemIndex;
         timeDropdown.onValueChanged.AddListener(OnDropdownValueChanged); // Add listener to dropdown value change
 
+        // Subscribe to the turbine filter change event
+        TurbineFilter.OnFilterChanged += UpdateChart;
+
         UpdateChart(); // Initial chart update
+    }
+
+    private void OnDestroy()
+    {
+        // Unsubscribe from the turbine filter change event to avoid memory leaks
+        TurbineFilter.OnFilterChanged -= UpdateChart;
     }
 
     private void OnDropdownValueChanged(int selectedIndex)
@@ -45,11 +54,17 @@ public class PowerGraphic : MonoBehaviour
         // Calculate the starting index based on the maximum values to display
         int startIndex = Mathf.Max(0, currentIndex - maxValuesToDisplay + 1);
 
+        string filter = TurbineFilter.SelectedTurbineID; // Get the currently selected turbine filter
+
         for (int i = startIndex; i <= currentIndex; i++)
         {
-            // Calculate power for all turbines at this interval
+            // Iterate through turbines and calculate power based on the filter
             for (int j = 0; j < turbineDataContainer.turbines.Length; j++)
             {
+                // Skip turbines that don't match the filter
+                if (filter != "All" && turbineDataContainer.turbines[j].turbineID != filter)
+                    continue;
+
                 currentPower += turbineDataContainer.turbines[j].powers[i];
             }
 

@@ -6,37 +6,43 @@ using TMPro; // For TextMeshPro
 public class RPM : MonoBehaviour
 {
     [SerializeField] private CustomDropdown timeDropdown; // Reference to your Michsky CustomDropdown
-    [SerializeField] private TMP_Text rpmText; // Text placeholder for countdown
+    [SerializeField] private TMP_Text rpmText; // Text placeholder for RPM display
+    [SerializeField] private TMP_Text label; // Label to display the current turbine
     [SerializeField] private TurbineDataContainer turbineDataContainer; // Reference to your TurbineDataContainer
 
     private int currentIndex; // Track the current dropdown index
-
     private float currentRPM = 0;
 
     void Start()
     {
-        // Ensure the dropdown value change listener is added
-        if (timeDropdown != null)
+        if (timeDropdown == null || rpmText == null || label == null || turbineDataContainer == null)
         {
-            currentIndex = timeDropdown.selectedItemIndex;
-            timeDropdown.onValueChanged.AddListener(OnDropdownValueChanged); // Add listener to dropdown value change
-            for (int i = 0; i < turbineDataContainer.turbines.Length; i++)
-            {
-                currentRPM += turbineDataContainer.turbines[i].rotorSpeeds[currentIndex];
-            }
-            currentRPM /= turbineDataContainer.turbines.Length; // Calculate the average RPM
+            Debug.LogError("Please assign all required references in the inspector.");
+            return;
         }
+
+        // Subscribe to the turbine filter's event
+        TurbineFilter.OnFilterChanged += OnFilterChanged;
+
+        currentIndex = timeDropdown.selectedItemIndex;
+        timeDropdown.onValueChanged.AddListener(OnDropdownValueChanged); // Add listener to dropdown value change
+
+        UpdateRPM(); // Initial RPM update
+        UpdateLabel(); // Initial label update
     }
 
-    // Update is called once per frame
+    private void OnDestroy()
+    {
+        // Unsubscribe to avoid memory leaks
+        TurbineFilter.OnFilterChanged -= OnFilterChanged;
+    }
+
     void Update()
     {
-        // Check if the turbineDataContainer is valid and the currentIndex is within bounds
         if (turbineDataContainer != null)
         {
-
             // Update the display with the current RPM
-            rpmText.text = $"{currentRPM} rpm"; // Format RPM text
+            rpmText.text = $"{currentRPM:F2} rpm"; // Format RPM to 2 decimal places
         }
         else
         {
@@ -44,16 +50,55 @@ public class RPM : MonoBehaviour
         }
     }
 
-    // Method to handle dropdown value change
     private void OnDropdownValueChanged(int selectedIndex)
     {
         currentIndex = selectedIndex; // Update the current index when the dropdown value changes
-        currentRPM = 0;
-        for (int i = 0; i < turbineDataContainer.turbines.Length; i++)
+        UpdateRPM(); // Refresh RPM calculation
+        UpdateLabel(); // Refresh label
+    }
+
+    private void OnFilterChanged()
+    {
+        UpdateRPM(); // Refresh RPM calculation when the filter changes
+        UpdateLabel(); // Refresh label
+    }
+
+    private void UpdateRPM()
+    {
+        currentRPM = 0; // Reset RPM calculation
+
+        if (TurbineFilter.SelectedTurbineID == "All")
         {
-            currentRPM += turbineDataContainer.turbines[i].rotorSpeeds[currentIndex];
+            // Calculate the average RPM for all turbines at the current index
+            foreach (var turbine in turbineDataContainer.turbines)
+            {
+                currentRPM += turbine.rotorSpeeds[currentIndex];
+            }
+            currentRPM /= turbineDataContainer.turbines.Length; // Average RPM
         }
-        currentRPM /= turbineDataContainer.turbines.Length; // Calculate the average RPM
-        //Debug.Log($"Selected dropdown index: {currentIndex}");
+        else
+        {
+            // Calculate the RPM for the selected turbine
+            foreach (var turbine in turbineDataContainer.turbines)
+            {
+                if (turbine.turbineID == TurbineFilter.SelectedTurbineID)
+                {
+                    currentRPM = turbine.rotorSpeeds[currentIndex];
+                    break;
+                }
+            }
+        }
+    }
+
+    private void UpdateLabel()
+    {
+        if (TurbineFilter.SelectedTurbineID == "All")
+        {
+            label.text = "Average RPM for All Turbines";
+        }
+        else
+        {
+            label.text = $"Current RPM for \"{TurbineFilter.SelectedTurbineID}\"";
+        }
     }
 }
