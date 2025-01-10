@@ -3,7 +3,11 @@ guid: b959ef8b6bbaa4bdc82a304fb6bfb740
 MonoImporter:
   externalObjects: {}
   serializedVersion: 2
-  defaultReferences: []
+  defaultReferences:
+  - timeDropdown: {instanceID: 0}
+  - rpmText: {instanceID: 0}
+  - label: {instanceID: 0}
+  - turbineDataContainer: {fileID: 11400000, guid: bb9c3c6670e564d4cba437e2d413fa11, type: 2}
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 

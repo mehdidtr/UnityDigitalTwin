@@ -5,6 +5,7 @@ MonoImporter:
   serializedVersion: 2
   defaultReferences:
   - csvFile: {fileID: 4900000, guid: dc17edc363cc14b048d8f35e52fc8e65, type: 3}
+  - turbineDataContainer: {fileID: 11400000, guid: bb9c3c6670e564d4cba437e2d413fa11, type: 2}
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 

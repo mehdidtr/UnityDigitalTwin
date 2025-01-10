@@ -3,7 +3,10 @@ guid: 5ddead5901c3f4f96aa5664725565c23
 MonoImporter:
   externalObjects: {}
   serializedVersion: 2
-  defaultReferences: []
+  defaultReferences:
+  - timeDropdown: {instanceID: 0}
+  - turbineDataContainer: {fileID: 11400000, guid: bb9c3c6670e564d4cba437e2d413fa11, type: 2}
+  - powerSumLabel: {instanceID: 0}
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 

@@ -3,7 +3,9 @@ guid: 9e36e3888ed684cde808ee32c022edc4
 MonoImporter:
   externalObjects: {}
   serializedVersion: 2
-  defaultReferences: []
+  defaultReferences:
+  - interventionValue: {instanceID: 0}
+  - turbineDataContainer: {fileID: 11400000, guid: bb9c3c6670e564d4cba437e2d413fa11, type: 2}
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 

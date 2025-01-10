@@ -3,7 +3,12 @@ guid: 972b4d6a0ea674816926ba8520b61f07
 MonoImporter:
   externalObjects: {}
   serializedVersion: 2
-  defaultReferences: []
+  defaultReferences:
+  - turbineDropdown: {instanceID: 0}
+  - turbineDataContainer: {fileID: 11400000, guid: bb9c3c6670e564d4cba437e2d413fa11, type: 2}
+  - windMillUniqueIcon: {instanceID: 0}
+  - windMillAllIcon: {instanceID: 0}
+  - canvasAndCameraPositionSwitcher: {instanceID: 0}
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 
