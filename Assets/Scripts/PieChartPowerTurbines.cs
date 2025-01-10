@@ -7,15 +7,13 @@ using ChartAndGraph;
 [ExecuteAlways] // Ensures the script updates the Inspector in edit mode
 public class PieChartPowerTurbines : MonoBehaviour
 {
-    [SerializeField] private CustomDropdown timeDropdown; 
-    [SerializeField] private TurbineDataContainer turbineDataContainer; 
-    public ChartAndGraph.PieChart chart; 
-    [SerializeField] private int maxValuesToDisplay = 9; 
+    [SerializeField] private CustomDropdown timeDropdown;
+    [SerializeField] private TurbineDataContainer turbineDataContainer;
+    public ChartAndGraph.PieChart chart;
+    [SerializeField] private int maxValuesToDisplay = 9;
 
-    [Header("Random Material Settings")]
-    [SerializeField] private string materialsPath = "Materials"; // Path in Resources folder for materials
-    private Material[] availableMaterials;
-    private Material[] assignedMaterials; // Stores materials for each turbine
+    [Header("Materials for Turbines")]
+    [SerializeField] private Material[] assignedMaterials; // Manually assign materials in the Inspector
 
     [Header("Colors (Randomized)")]
     public List<Color> hoverColors = new List<Color>();
@@ -27,14 +25,12 @@ public class PieChartPowerTurbines : MonoBehaviour
     {
         if (turbineDataContainer != null)
         {
-            LoadMaterials(); // Load materials from the specified path
-
             // Ensure the lists match the number of turbines in the container
             AdjustListSize(hoverColors, turbineDataContainer.turbines.Length, GenerateRandomColor());
             AdjustListSize(selectedColors, turbineDataContainer.turbines.Length, GenerateRandomColor());
 
-            // Generate random materials once and store them
-            AssignRandomMaterials();
+            // Validate or initialize materials array
+            AdjustMaterialsArraySize();
         }
     }
 
@@ -104,39 +100,21 @@ public class PieChartPowerTurbines : MonoBehaviour
         }
     }
 
-    private void LoadMaterials()
-    {
-        availableMaterials = Resources.LoadAll<Material>(materialsPath);
-
-        if (availableMaterials.Length == 0)
-        {
-            Debug.LogError($"No materials found in Resources/{materialsPath}. Ensure you have materials in the specified path.");
-        }
-    }
-
-    private void AssignRandomMaterials()
+    private void AdjustMaterialsArraySize()
     {
         if (turbineDataContainer == null) return;
 
-        // Initialize or resize assignedMaterials array
-        assignedMaterials = new Material[turbineDataContainer.turbines.Length];
-
-        for (int i = 0; i < assignedMaterials.Length; i++)
+        if (assignedMaterials == null || assignedMaterials.Length != turbineDataContainer.turbines.Length)
         {
-            assignedMaterials[i] = GetRandomMaterial();
-        }
-    }
+            Material[] newMaterials = new Material[turbineDataContainer.turbines.Length];
 
-    private Material GetRandomMaterial()
-    {
-        if (availableMaterials == null || availableMaterials.Length == 0)
-        {
-            Debug.LogError("No materials available to assign. Ensure materials are loaded properly.");
-            return null;
-        }
+            for (int i = 0; i < newMaterials.Length; i++)
+            {
+                newMaterials[i] = i < assignedMaterials?.Length ? assignedMaterials[i] : null;
+            }
 
-        int randomIndex = UnityEngine.Random.Range(0, availableMaterials.Length);
-        return availableMaterials[randomIndex];
+            assignedMaterials = newMaterials;
+        }
     }
 
     private Color GenerateRandomColor()
