@@ -2,19 +2,19 @@ using UnityEngine;
 using Michsky.MUIP; // Michsky.MUIP namespace
 using TMPro; // For TextMeshPro
 
-public class AverageWindSpeed : MonoBehaviour
+public class AverageAmbientTemp : MonoBehaviour
 {
     [SerializeField] private CustomDropdown timeDropdown; // Dropdown for time intervals
-    [SerializeField] private TMP_Text avgWindText; // Text placeholder to display average wind speed
+    [SerializeField] private TMP_Text avgAmbientText; // Text placeholder to display average wind speed
     [SerializeField] private TMP_Text label; // Label to display the current turbine
     [SerializeField] private TurbineDataContainer turbineDataContainer; // Reference to your TurbineDataContainer
 
     private int currentIndex; // Variable to track the current index of the dropdown
-    private float avgWindSpeed; // Variable to store the average wind speed
+    private float avgAmbientTemp; // Variable to store the average wind speed
 
     void Start()
     {
-        if (timeDropdown == null || avgWindText == null || label == null || turbineDataContainer == null)
+        if (timeDropdown == null || avgAmbientText == null || label == null || turbineDataContainer == null)
         {
             Debug.LogError("Please assign all required references in the inspector.");
             return;
@@ -26,7 +26,7 @@ public class AverageWindSpeed : MonoBehaviour
         currentIndex = timeDropdown.selectedItemIndex;
         timeDropdown.onValueChanged.AddListener(OnDropdownValueChanged); // Add listener to dropdown value change
 
-        UpdateWindSpeed(); // Initial wind speed update
+        UpdateAmbientTemp(); // Initial wind speed update
         UpdateLabel(); // Initial label update
     }
 
@@ -41,39 +41,39 @@ public class AverageWindSpeed : MonoBehaviour
         if (turbineDataContainer != null)
         {
             // Update the display with the current average wind speed
-            avgWindText.text = $"{avgWindSpeed:F2} m/s"; // Format wind speed to 2 decimal places
+            avgAmbientText.text = $"{avgAmbientTemp:F2}°"; // Format wind speed to 2 decimal places
         }
         else
         {
-            avgWindText.text = "No data available";
+            avgAmbientText.text = "No data available";
         }
     }
 
     private void OnDropdownValueChanged(int selectedIndex)
     {
         currentIndex = selectedIndex; // Update the current index when the dropdown value changes
-        UpdateWindSpeed(); // Refresh wind speed calculation
+        UpdateAmbientTemp(); // Refresh wind speed calculation
         UpdateLabel(); // Refresh label
     }
 
     private void OnFilterChanged()
     {
-        UpdateWindSpeed(); // Refresh wind speed calculation when the filter changes
+        UpdateAmbientTemp(); // Refresh wind speed calculation when the filter changes
         UpdateLabel(); // Refresh label
     }
 
-    private void UpdateWindSpeed()
+    private void UpdateAmbientTemp()
     {
-        avgWindSpeed = 0; // Reset wind speed calculation
+        avgAmbientTemp = 0; // Reset wind speed calculation
 
         if (TurbineFilter.SelectedTurbineID == "All")
         {
             // Calculate the average wind speed for all turbines at the current index
             foreach (var turbine in turbineDataContainer.turbines)
             {
-                avgWindSpeed += turbine.windSpeeds[currentIndex];
+                avgAmbientTemp += turbine.ambientTemperatures[currentIndex];
             }
-            avgWindSpeed /= turbineDataContainer.turbines.Length; // Average wind speed
+            avgAmbientTemp /= turbineDataContainer.turbines.Length; // Average wind speed
         }
         else
         {
@@ -82,7 +82,7 @@ public class AverageWindSpeed : MonoBehaviour
             {
                 if (turbine.turbineID == TurbineFilter.SelectedTurbineID)
                 {
-                    avgWindSpeed = turbine.windSpeeds[currentIndex];
+                    avgAmbientTemp = turbine.ambientTemperatures[currentIndex];
                     break;
                 }
             }
@@ -93,11 +93,11 @@ public class AverageWindSpeed : MonoBehaviour
     {
         if (TurbineFilter.SelectedTurbineID == "All")
         {
-            label.text = "Average Wind Speed for All Turbines";
+            label.text = "Average Temperature for All Turbines";
         }
         else
         {
-            label.text = $"Wind Speed for \"{TurbineFilter.SelectedTurbineID}\"";
+            label.text = $"Temperature for \"{TurbineFilter.SelectedTurbineID}\"";
         }
     }
 }
