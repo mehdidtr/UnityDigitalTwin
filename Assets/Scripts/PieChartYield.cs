@@ -4,24 +4,61 @@ using UnityEngine;
 using Michsky.MUIP;
 using ChartAndGraph;
 
+/// <summary>
+/// Updates a pie chart to display the yield and remaining potential of turbines based on the selected time range and filter.
+/// </summary>
 public class PieChartYield : MonoBehaviour
 {
+    /// <summary>
+    /// Dropdown for selecting the time range.
+    /// </summary>
     [SerializeField] private CustomDropdown timeDropdown;
+
+    /// <summary>
+    /// Container holding data for all turbines.
+    /// </summary>
     [SerializeField] private TurbineDataContainer turbineDataContainer;
+
+    /// <summary>
+    /// Reference to the pie chart being updated.
+    /// </summary>
     public ChartAndGraph.PieChart chart;
 
+    /// <summary>
+    /// Maximum theoretical power output for a turbine.
+    /// </summary>
     private const float maxTurbinePower = 1706f;
 
     [Header("Materials")]
+    /// <summary>
+    /// Material used for the "Yield" category in the chart.
+    /// </summary>
     [SerializeField] public Material yieldMaterial;
+
+    /// <summary>
+    /// Material used for the "Remaining" category in the chart.
+    /// </summary>
     [SerializeField] public Material remainingMaterial;
 
     [Header("Colors")]
+    /// <summary>
+    /// Colors used for hover effects on chart categories.
+    /// </summary>
     public List<Color> hoverColors = new List<Color>();
+
+    /// <summary>
+    /// Colors used for selection effects on chart categories.
+    /// </summary>
     public List<Color> selectedColors = new List<Color>();
 
-    private int currentIndex; // Track the current dropdown index
+    /// <summary>
+    /// Tracks the currently selected index in the time dropdown.
+    /// </summary>
+    private int currentIndex;
 
+    /// <summary>
+    /// Initializes the pie chart and sets up event listeners.
+    /// </summary>
     private void Start()
     {
         if (timeDropdown == null || turbineDataContainer == null || chart == null)
@@ -36,35 +73,47 @@ public class PieChartYield : MonoBehaviour
             return;
         }
 
-        // Subscribe to TurbineFilter's filter change event
+        // Subscribe to the filter change event
         TurbineFilter.OnFilterChanged += OnFilterChanged;
 
         currentIndex = timeDropdown.selectedItemIndex;
-        timeDropdown.onValueChanged.AddListener(OnDropdownValueChanged); // Add listener to dropdown value change
+        timeDropdown.onValueChanged.AddListener(OnDropdownValueChanged);
 
         UpdateChart(); // Initial chart update
     }
 
+    /// <summary>
+    /// Removes event listeners to avoid memory leaks.
+    /// </summary>
     private void OnDestroy()
     {
-        // Unsubscribe to avoid memory leaks
         TurbineFilter.OnFilterChanged -= OnFilterChanged;
     }
 
+    /// <summary>
+    /// Updates the chart when the dropdown value changes.
+    /// </summary>
+    /// <param name="selectedIndex">The selected index of the dropdown.</param>
     private void OnDropdownValueChanged(int selectedIndex)
     {
-        currentIndex = selectedIndex; // Update the current index when the dropdown value changes
-        UpdateChart(); // Refresh chart data
+        currentIndex = selectedIndex;
+        UpdateChart();
     }
 
+    /// <summary>
+    /// Updates the chart when the turbine filter changes.
+    /// </summary>
     private void OnFilterChanged()
     {
-        UpdateChart(); // Update chart when the filter changes
+        UpdateChart();
     }
 
+    /// <summary>
+    /// Updates the pie chart data based on the current time range and turbine filter.
+    /// </summary>
     private void UpdateChart()
     {
-        chart.DataSource.Clear(); // Clear the existing pie chart data
+        chart.DataSource.Clear(); // Clear existing data
 
         float totalPower = 0;
         int turbineCount = 0;
@@ -72,7 +121,6 @@ public class PieChartYield : MonoBehaviour
         // Check the selected turbine filter
         if (TurbineFilter.SelectedTurbineID == "All")
         {
-            // Calculate the total power for all turbines at the currentIndex
             foreach (var turbine in turbineDataContainer.turbines)
             {
                 totalPower += turbine.powers[currentIndex];
@@ -82,13 +130,12 @@ public class PieChartYield : MonoBehaviour
         }
         else
         {
-            // Calculate the power for the specific turbine
             foreach (var turbine in turbineDataContainer.turbines)
             {
                 if (turbine.turbineID == TurbineFilter.SelectedTurbineID)
                 {
                     totalPower += turbine.powers[currentIndex];
-                    turbineCount = 1; // Only one turbine is included
+                    turbineCount = 1;
                     break;
                 }
             }
@@ -100,12 +147,12 @@ public class PieChartYield : MonoBehaviour
             return;
         }
 
-        // Calculate average power per turbine
+        // Calculate yield and remaining percentages
         float averagePower = totalPower / turbineCount;
         float yieldPercentage = Mathf.Clamp((averagePower / maxTurbinePower) * 100f, 0, 100);
         float remainingPercentage = 100f - yieldPercentage;
 
-        // Assign materials to categories
+        // Assign materials and colors to the categories
         ChartDynamicMaterial yieldDynamicMaterial = new ChartDynamicMaterial(yieldMaterial, hoverColors[0], selectedColors[0]);
         ChartDynamicMaterial remainingDynamicMaterial = new ChartDynamicMaterial(remainingMaterial, hoverColors[1], selectedColors[1]);
 

@@ -1,15 +1,39 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// Manages the switching of canvases and camera positions for different views or turbines.
+/// </summary>
 public class CanvasAndCameraPositionSwitcher : MonoBehaviour
 {
-    public Canvas[] canvases;             // Array to hold all canvases
-    public Transform[] cameraPositions;  // Array to store predefined camera positions and rotations
-    public Camera mainCamera;         // Reference to the main camera
-    public float transitionSpeed = 5f;   // Speed of the camera transition (optional for smooth movement)
+    /// <summary>
+    /// Array to hold all canvases used in the scene.
+    /// </summary>
+    public Canvas[] canvases;
 
-    private Dictionary<string, Transform> turbineCameraPositions; // Maps turbineID to camera position
+    /// <summary>
+    /// Array to store predefined camera positions and rotations.
+    /// </summary>
+    public Transform[] cameraPositions;
 
+    /// <summary>
+    /// Reference to the main camera in the scene.
+    /// </summary>
+    public Camera mainCamera;
+
+    /// <summary>
+    /// Speed of the camera transition for smooth movement.
+    /// </summary>
+    public float transitionSpeed = 5f;
+
+    /// <summary>
+    /// Dictionary mapping turbine IDs to specific camera positions.
+    /// </summary>
+    private Dictionary<string, Transform> turbineCameraPositions;
+
+    /// <summary>
+    /// Initializes the turbine-to-camera mapping and sets the initial canvas and camera position.
+    /// </summary>
     void Start()
     {
         // Initialize the dictionary mapping turbine IDs to camera positions
@@ -24,31 +48,37 @@ public class CanvasAndCameraPositionSwitcher : MonoBehaviour
             { "T104", cameraPositions[8] },
             { "T105", cameraPositions[9] },
             { "T106", cameraPositions[10] },
-            { "T107", cameraPositions[11] },
-            // Add more mappings as needed
+            { "T107", cameraPositions[11] }
         };
 
         // Start by activating the first canvas and positioning the main camera
         SwitchToView(0);
     }
 
+    /// <summary>
+    /// Switches to a specific view by activating the corresponding canvas and moving the camera.
+    /// </summary>
+    /// <param name="index">The index of the view to switch to.</param>
     public void SwitchToView(int index)
     {
         MoveCameraToPosition(index);
 
-        if (index == 0 ){
+        if (index == 0)
+        {
             canvases[0].gameObject.SetActive(true);
             canvases[1].gameObject.SetActive(false);
         }
-        else{
+        else
+        {
             canvases[0].gameObject.SetActive(false);
             canvases[1].gameObject.SetActive(true);
         }
-
-
-        // Move the main camera to the specified position and rotation
     }
 
+    /// <summary>
+    /// Moves the camera to a position associated with a specific turbine ID.
+    /// </summary>
+    /// <param name="turbineID">The ID of the turbine to focus on.</param>
     public void MoveToTurbine(string turbineID)
     {
         if (turbineCameraPositions.TryGetValue(turbineID, out Transform targetPosition))
@@ -61,11 +91,14 @@ public class CanvasAndCameraPositionSwitcher : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Instantly moves the camera to a specified target position and rotation.
+    /// </summary>
+    /// <param name="targetPosition">The target position and rotation for the camera.</param>
     private void MoveCameraToPosition(Transform targetPosition)
     {
         if (targetPosition != null)
         {
-            // Move camera instantly (optional for instant snapping)
             mainCamera.transform.position = targetPosition.position;
             mainCamera.transform.rotation = targetPosition.rotation;
 
@@ -78,6 +111,10 @@ public class CanvasAndCameraPositionSwitcher : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Moves the camera to a position based on the index in the camera positions array.
+    /// </summary>
+    /// <param name="index">The index of the target camera position.</param>
     private void MoveCameraToPosition(int index)
     {
         if (index >= 0 && index < cameraPositions.Length)
@@ -90,7 +127,11 @@ public class CanvasAndCameraPositionSwitcher : MonoBehaviour
         }
     }
 
-    // Optional: Smooth camera movement using a coroutine
+    /// <summary>
+    /// Smoothly moves the camera to a specified position and rotation over time.
+    /// </summary>
+    /// <param name="targetPosition">The target position and rotation for the camera.</param>
+    /// <returns>An enumerator for coroutine execution.</returns>
     private System.Collections.IEnumerator SmoothMoveCamera(Transform targetPosition)
     {
         Vector3 startPosition = mainCamera.transform.position;

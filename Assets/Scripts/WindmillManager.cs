@@ -2,18 +2,43 @@ using System.Collections;
 using UnityEngine;
 using Michsky.MUIP; // Michsky.MUIP namespace for dropdown handling
 
+/// <summary>
+/// Manages the behavior of a windmill, including rotor rotation and interaction with time selection via dropdown.
+/// </summary>
 public class WindmillManager : MonoBehaviour
 {
-    public string turbineID; // Manually set the ID in the Inspector
-    public TurbineDataContainer turbineDataContainer; // Reference to TurbineDataContainer ScriptableObject
-    public Transform windmillBlades; // Windmill blades to rotate
-    public Vector3 rotationAxis = Vector3.forward; // Axis of rotation (default is Z-axis)
-    public CustomDropdown timeDropdown; // Reference to Michsky CustomDropdown for time selection
+    /// <summary>
+    /// The unique ID of the turbine. This ID is manually assigned in the Inspector.
+    /// </summary>
+    public string turbineID;
+
+    /// <summary>
+    /// Reference to the TurbineDataContainer ScriptableObject that holds turbine data.
+    /// </summary>
+    public TurbineDataContainer turbineDataContainer;
+
+    /// <summary>
+    /// The Transform of the windmill blades used for rotation.
+    /// </summary>
+    public Transform windmillBlades;
+
+    /// <summary>
+    /// The axis of rotation for the windmill blades (default is Z-axis).
+    /// </summary>
+    public Vector3 rotationAxis = Vector3.forward;
+
+    /// <summary>
+    /// Reference to the CustomDropdown for selecting the time interval.
+    /// </summary>
+    public CustomDropdown timeDropdown;
 
     private TurbineData turbineData; // Holds the data for the specific turbine
     private int currentIntervalIndex = 0; // Tracks the current time interval
     private int selectedTimeFactor = 10; // Default factor in minutes
 
+    /// <summary>
+    /// Initializes the windmill, retrieves the turbine data, and starts the windmill rotation process.
+    /// </summary>
     private void Start()
     {
         // Fetch data for the turbineID from the container
@@ -31,6 +56,10 @@ public class WindmillManager : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Rotates the windmill blades based on the rotor speed data and selected time factor.
+    /// The blades rotate for the selected interval duration.
+    /// </summary>
     private IEnumerator RotateWindmill()
     {
         while (true)
@@ -66,7 +95,11 @@ public class WindmillManager : MonoBehaviour
         }
     }
 
-    // Method called when a dropdown option is selected
+    /// <summary>
+    /// Called when a dropdown option is selected to update the selected time factor.
+    /// Also logs the selected turbine's RPM.
+    /// </summary>
+    /// <param name="selectedIndex">The index of the selected dropdown option.</param>
     private void OnDropdownOptionSelected(int selectedIndex)
     {
         if (selectedIndex < 0 || selectedIndex >= turbineData.timeIntervals.Length)
@@ -88,7 +121,11 @@ public class WindmillManager : MonoBehaviour
         Debug.Log($"All wind turbines' RPM will be adjusted based on the selected time interval: {selectedInterval}");
     }
 
-    // Parse the time factor from the interval string (assumes consistent format like "00:00-00:10")
+    /// <summary>
+    /// Parses the time factor from the selected interval string (assumes a format like "00:00-00:10").
+    /// </summary>
+    /// <param name="timeInterval">The time interval string to parse.</param>
+    /// <returns>The parsed time factor in minutes.</returns>
     private int ParseTimeFactor(string timeInterval)
     {
         string[] parts = timeInterval.Split('-');
@@ -108,7 +145,7 @@ public class WindmillManager : MonoBehaviour
         }
 
         int startMinutes = int.Parse(startParts[startParts.Length - 2]);
-        int endMinutes = int.Parse(endParts[startParts.Length - 2]);
+        int endMinutes = int.Parse(endParts[endParts.Length - 2]);
 
         return endMinutes - startMinutes; // Return the difference in minutes
     }

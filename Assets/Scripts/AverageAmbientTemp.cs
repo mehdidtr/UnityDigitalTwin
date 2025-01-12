@@ -2,16 +2,44 @@ using UnityEngine;
 using Michsky.MUIP; // Michsky.MUIP namespace
 using TMPro; // For TextMeshPro
 
+/// <summary>
+/// Handles the calculation and display of average ambient temperature for turbines.
+/// </summary>
 public class AverageAmbientTemp : MonoBehaviour
 {
-    [SerializeField] private CustomDropdown timeDropdown; // Dropdown for time intervals
-    [SerializeField] private TMP_Text avgAmbientText; // Text placeholder to display average wind speed
-    [SerializeField] private TMP_Text label; // Label to display the current turbine
-    [SerializeField] private TurbineDataContainer turbineDataContainer; // Reference to your TurbineDataContainer
+    /// <summary>
+    /// Dropdown for selecting time intervals.
+    /// </summary>
+    [SerializeField] private CustomDropdown timeDropdown;
 
-    private int currentIndex; // Variable to track the current index of the dropdown
-    private float avgAmbientTemp; // Variable to store the average wind speed
+    /// <summary>
+    /// Text placeholder to display the average ambient temperature.
+    /// </summary>
+    [SerializeField] private TMP_Text avgAmbientText;
 
+    /// <summary>
+    /// Label to display the current turbine information.
+    /// </summary>
+    [SerializeField] private TMP_Text label;
+
+    /// <summary>
+    /// Reference to the TurbineDataContainer holding turbine information.
+    /// </summary>
+    [SerializeField] private TurbineDataContainer turbineDataContainer;
+
+    /// <summary>
+    /// Tracks the current index of the dropdown.
+    /// </summary>
+    private int currentIndex;
+
+    /// <summary>
+    /// Stores the calculated average ambient temperature.
+    /// </summary>
+    private float avgAmbientTemp;
+
+    /// <summary>
+    /// Initializes component references, subscribes to events, and updates UI.
+    /// </summary>
     void Start()
     {
         if (timeDropdown == null || avgAmbientText == null || label == null || turbineDataContainer == null)
@@ -24,24 +52,28 @@ public class AverageAmbientTemp : MonoBehaviour
         TurbineFilter.OnFilterChanged += OnFilterChanged;
 
         currentIndex = timeDropdown.selectedItemIndex;
-        timeDropdown.onValueChanged.AddListener(OnDropdownValueChanged); // Add listener to dropdown value change
+        timeDropdown.onValueChanged.AddListener(OnDropdownValueChanged);
 
-        UpdateAmbientTemp(); // Initial wind speed update
-        UpdateLabel(); // Initial label update
+        UpdateAmbientTemp();
+        UpdateLabel();
     }
 
+    /// <summary>
+    /// Unsubscribes from events to avoid memory leaks when the object is destroyed.
+    /// </summary>
     private void OnDestroy()
     {
-        // Unsubscribe to avoid memory leaks
         TurbineFilter.OnFilterChanged -= OnFilterChanged;
     }
 
+    /// <summary>
+    /// Updates the displayed average ambient temperature each frame.
+    /// </summary>
     void Update()
     {
         if (turbineDataContainer != null)
         {
-            // Update the display with the current average wind speed
-            avgAmbientText.text = $"{avgAmbientTemp:F2}°"; // Format wind speed to 2 decimal places
+            avgAmbientText.text = $"{avgAmbientTemp:F2}°";
         }
         else
         {
@@ -49,35 +81,46 @@ public class AverageAmbientTemp : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Handles the event when the dropdown value is changed.
+    /// Updates the current index and refreshes the UI.
+    /// </summary>
+    /// <param name="selectedIndex">The new selected index of the dropdown.</param>
     private void OnDropdownValueChanged(int selectedIndex)
     {
-        currentIndex = selectedIndex; // Update the current index when the dropdown value changes
-        UpdateAmbientTemp(); // Refresh wind speed calculation
-        UpdateLabel(); // Refresh label
+        currentIndex = selectedIndex;
+        UpdateAmbientTemp();
+        UpdateLabel();
     }
 
+    /// <summary>
+    /// Updates the UI when the turbine filter selection changes.
+    /// </summary>
     private void OnFilterChanged()
     {
-        UpdateAmbientTemp(); // Refresh wind speed calculation when the filter changes
-        UpdateLabel(); // Refresh label
+        UpdateAmbientTemp();
+        UpdateLabel();
     }
 
+    /// <summary>
+    /// Calculates the average ambient temperature based on the current filter and time interval.
+    /// </summary>
     private void UpdateAmbientTemp()
     {
-        avgAmbientTemp = 0; // Reset wind speed calculation
+        avgAmbientTemp = 0;
 
         if (TurbineFilter.SelectedTurbineID == "All")
         {
-            // Calculate the average wind speed for all turbines at the current index
+            // Calculate the average for all turbines
             foreach (var turbine in turbineDataContainer.turbines)
             {
                 avgAmbientTemp += turbine.ambientTemperatures[currentIndex];
             }
-            avgAmbientTemp /= turbineDataContainer.turbines.Length; // Average wind speed
+            avgAmbientTemp /= turbineDataContainer.turbines.Length;
         }
         else
         {
-            // Calculate the wind speed for the selected turbine
+            // Calculate for the selected turbine
             foreach (var turbine in turbineDataContainer.turbines)
             {
                 if (turbine.turbineID == TurbineFilter.SelectedTurbineID)
@@ -89,6 +132,9 @@ public class AverageAmbientTemp : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Updates the label text to reflect the selected turbine or "All" turbines.
+    /// </summary>
     private void UpdateLabel()
     {
         if (TurbineFilter.SelectedTurbineID == "All")

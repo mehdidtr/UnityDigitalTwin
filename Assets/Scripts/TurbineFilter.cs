@@ -3,15 +3,31 @@ using UnityEngine;
 
 public class TurbineFilter : MonoBehaviour
 {
-    public static string SelectedTurbineID { get; private set; } = "All"; // Default to "All"
-    public static event Action OnFilterChanged; // Event to notify listeners about filter changes
+    /// <summary>
+    /// The ID of the currently selected turbine. Default is "All".
+    /// </summary>
+    public static string SelectedTurbineID { get; private set; } = "All";
 
-    // Method to update the selected turbine filter
+    /// <summary>
+    /// Event that is triggered when the turbine filter is changed.
+    /// Subscribers will be notified about filter changes.
+    /// </summary>
+    public static event Action OnFilterChanged;
+
+    /// <summary>
+    /// Updates the selected turbine filter with the given turbine ID.
+    /// If the turbine ID is the same as the current one, no update is made.
+    /// </summary>
+    /// <param name="turbineID">The ID of the turbine to set as the new filter.</param>
     public static void UpdateFilter(string turbineID)
     {
-        if (SelectedTurbineID == turbineID) return; // Avoid unnecessary updates
+        // Avoid unnecessary updates if the selected turbine ID is the same as the current one
+        if (SelectedTurbineID == turbineID) return;
 
+        // Update the selected turbine ID
         SelectedTurbineID = turbineID;
-        OnFilterChanged?.Invoke(); // Notify subscribers about the filter change
+
+        // Trigger the OnFilterChanged event to notify subscribers of the change
+        OnFilterChanged?.Invoke();
     }
 }
