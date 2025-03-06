@@ -139,11 +139,11 @@ public class AverageAmbientTemp : MonoBehaviour
     {
         if (TurbineFilter.SelectedTurbineID == "All")
         {
-            label.text = "Average Temperature for All Turbines";
+            label.text = "Température Moyenne";
         }
         else
         {
-            label.text = $"Temperature for \"{TurbineFilter.SelectedTurbineID}\"";
+            label.text = $"Température {TurbineFilter.SelectedTurbineID}";
         }
     }
 }

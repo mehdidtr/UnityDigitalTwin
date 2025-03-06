@@ -136,11 +136,11 @@ public class RPM : MonoBehaviour
     {
         if (TurbineFilter.SelectedTurbineID == "All")
         {
-            label.text = "Average RPM for All Turbines"; // Label for all turbines
+            label.text = "RPM Moyen"; // Label for all turbines
         }
         else
         {
-            label.text = $"Current RPM for \"{TurbineFilter.SelectedTurbineID}\""; // Label for a specific turbine
+            label.text = $"RPM {TurbineFilter.SelectedTurbineID}"; // Label for a specific turbine
         }
     }
 }

@@ -139,11 +139,11 @@ public class AverageWindSpeed : MonoBehaviour
     {
         if (TurbineFilter.SelectedTurbineID == "All")
         {
-            label.text = "Average Wind Speed for All Turbines";
+            label.text = "Vitesse du vent Moyen";
         }
         else
         {
-            label.text = $"Wind Speed for \"{TurbineFilter.SelectedTurbineID}\"";
+            label.text = $"Vitesse du vent {TurbineFilter.SelectedTurbineID}";
         }
     }
 }
